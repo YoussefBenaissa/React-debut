@@ -3,12 +3,12 @@ import { useEffect } from "react";
 import axios from "axios";
 import Card from "./Card";
 
-
 const Countries = () => {
     // initializer dta à un tab vide
     const [data, setData] = useState([]);
     const [playOnce, setPlayOnce] = useState(true);
     const [sortedData, setSortedData] = useState([]);
+    const [rangeValue, setRangeValue] = useState(40);
     useEffect(() => {
         if (playOnce) {
             axios
@@ -18,43 +18,39 @@ const Countries = () => {
                 .then((res) => {
                     setData(res.data);
                     setPlayOnce(false);
-                    const sortedCountry = () => {
-                        const countryObject = Object.keys(data).map((i) => data[i]);
-                        const sortedArray = countryObject.sort((a, b) => {
-                            return b.population - a.population;
-                        });
-                        sortedArray.length = 30;
-                        setSortedData(sortedArray);
-
-                    };
-                    sortedCountry();
-
-
-
-
+                });}
+            const sortedCountry = () => {
+                const countryObject = Object.keys(data).map((i) => data[i]);
+                const sortedArray = countryObject.sort((a, b) => {
+                    return b.population - a.population;
                 });
-               
+                sortedArray.length = rangeValue;
+                setSortedData(sortedArray);
 
+            }; sortedCountry();
 
-
-
-
-        }
         
-    }, [data, playOnce]);
+    }, [data, playOnce, rangeValue]);
 
     return (
-        <div className="countries">
-            <ul className="countries-list">
-                {sortedData.map((country) => (
-                    <Card country={country} key={country.name} />
-
-
-                ))}
-
-
-            </ul>
+        <><div className="sort-container">
+            <input type="range" min="1" max="250" value={rangeValue}
+                onChange={(e) => setRangeValue(e.target.value)} />
         </div>
+            <div className="countries">
+
+
+                <ul className="countries-list">
+                    {sortedData.map((country) => (
+                        <Card country={country} key={country.name} />
+
+
+                    ))}
+
+
+                </ul>
+            </div>
+        </>
     );
 };
 export default Countries;
